@@ -40,21 +40,22 @@ void test(){
         if(strcmp(buffer,"packets") == 0){
             strcpy(packet_transm,temp);
         }
-        if(strcmp(buffer,"received") == 0){
+        if(strcmp(buffer,"received,") == 0){
             strcpy(packet_receiv,temp);
         }
         if(strcmp(buffer,"packet") == 0){
             strcpy(packet_loss,temp);
         }
-        
-        temp[0] ='\0';  
         strcpy(temp, buffer);
-        printf("%s\n", buffer);
+        printf("%s\t", buffer);
     }
 
     strcpy(time_delai,temp);
 
-    printf("Le packet reçu est : %s",packet_receiv);
+    printf("\nLe packet tansmit (Transmitted) est : %s\n",packet_transm);
+    printf("Le packet reçu (received) est : %s\n",packet_receiv);
+    printf("Le packet perdu (loss) est : %s\n",packet_loss);
+    printf("Le temps aller - retour (delai) : %s\n",time_delai);
     pclose(fp);
 
 }

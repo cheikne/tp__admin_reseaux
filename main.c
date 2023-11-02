@@ -2,7 +2,7 @@
 
 int main(){
 
-    pingHote_Exo1();
+    //pingHote_Exo1();
     test();
 
     return 0;
