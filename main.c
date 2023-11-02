@@ -1,9 +1,11 @@
-#include "tp1.h" 
+#include "tp1.h"
 
-int main(){
+int main()
+{
 
-    //pingHote_Exo1();
-    test();
+    // pingHote_Exo1();
+    lectureFichierIp_Exo3();
+    calculPourcentagePacket_Exo2();
 
     return 0;
 }
