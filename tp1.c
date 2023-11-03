@@ -95,9 +95,11 @@ static void doPing(char *addr_ip)
     command[0] = '\0';
     strcat(command, "ping -c 3 ");
     strcat(command, " ");
+    addr_ip[strlen(addr_ip) - 1] = '\0';
     strcat(command, addr_ip);
     strcat(command, "|grep packets");
-
+    // printf("Commande : %s\n", command);
+    // return;
     fp = popen(command, "r");
 
     if (fp == NULL)
