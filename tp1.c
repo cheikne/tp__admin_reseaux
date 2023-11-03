@@ -117,5 +117,5 @@ static void doPing(char *addr_ip)
         }
         strcpy(temp, buffer);
     }
-    // printf("%s\n", temp);
+    printf("%s\n", temp);
 }
