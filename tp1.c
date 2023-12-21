@@ -24,6 +24,7 @@ void calculPourcentagePacket_Exo2()
 
     printf("Entrez l'adresse ip/hote que vous souhaitez ping : ");
     scanf("%s", adr_ip);
+    printf("\n\n----------Voici les statiques du ping--------- \n: ");
     command[0] = '\0';
     strcat(command, "ping -c 5 ");
     strcat(command, " ");
@@ -53,7 +54,7 @@ void calculPourcentagePacket_Exo2()
             strcpy(packet_loss, temp);
         }
         strcpy(temp, buffer);
-        printf("%s\t", buffer);
+        printf("%s", buffer);printf("   ");
     }
 
     strcpy(time_delai, temp);
@@ -70,7 +71,10 @@ void calculPourcentagePacket_Exo2()
 void lectureFichierIp_Exo3()
 {
     FILE *fichier;
-    fichier = fopen("test", "r");
+    char nameFile[30];
+    printf("Entrez le nom de votre fichier qui contient les @IP (exp:test/test.txt) : \n");
+    scanf("%s",nameFile);
+    fichier = fopen(nameFile, "r");
 
     // Vérifier si le fichier est ouvert avec succès
     if (fichier == NULL)
@@ -80,6 +84,7 @@ void lectureFichierIp_Exo3()
     }
 
     char ligne[100];
+    printf("\n--------------------- Voici pour chaque  @IP  : ---------------\n");
 
     while (fgets(ligne, sizeof(ligne), fichier) != NULL)
     {

@@ -92,14 +92,66 @@ header_ip_icmp checkingBeforeAndAfterUpdateCheckSumIcmp(char *ip_packet,char *ic
     memcpy(ip_packet,&headers.ip_header,sizeof(headers.ip_header));
     memcpy(ip_packet + sizeof(headers.ip_header),&headers.icmp_header,sizeof(headers.icmp_header));
     printf("\n\nL'affichage AVANT le calcul de la somme de controle\n");
-    display(icmp_packet,sizeof(icmp_packet));
-    //Mise en jour de la somme de controle de ICMP
+    display(ip_packet,sizeof(ip_packet)+sizeof(ip_header));
+
     headers.icmp_header.checksum = checksum(icmp_packet,sizeof(icmp_packet));
     //printf("La somme de controle est ICMP: 0x%04X\n",headers.icmp_header.checksum);
     headers.ip_header.check = checksum(ip_packet,sizeof(ip_packet));
     printf("\nL'affichage APRES le calcul de la somme de controle\n");
     //printf("La somme de controle est de IP: 0x%04X\n",headers.ip_header.check);
-    display(icmp_packet,sizeof(icmp_packet));
+    display(ip_packet,sizeof(ip_packet)+sizeof(ip_header));
 
     return headers;
 }
+
+
+void creationSocketToSendPacket(struct iphdr ip_header, char *ip_packet){
+
+// Création de la socket
+    int raw_socket = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+    if (raw_socket == -1) {
+        perror("Erreur lors de la création de la socket");
+        exit(EXIT_FAILURE);
+    }
+
+    // Initialisation de l'adresse de destination
+    struct sockaddr_in dest_addr;
+    memset(&dest_addr, 0, sizeof(dest_addr));
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = 0; // Pas utilisé pour SOCK_RAW
+    dest_addr.sin_addr.s_addr = ip_header.daddr; // Remplacez par l'adresse de destination réelle
+    memset(dest_addr.sin_zero, 0, sizeof(dest_addr.sin_zero));
+
+    // Envoi du paquet
+    ssize_t bytes_sent = sendto(raw_socket, ip_packet, sizeof(ip_packet), 0,
+                                (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+
+    if (bytes_sent == -1) {
+        perror("Erreur lors de l'envoi du paquet");
+    } else {
+        printf("Paquet envoyé avec succès (%zd octets)\n", bytes_sent);
+    }
+
+    //Reception de la reponse du ping
+    char buffer[100];
+    struct sockaddr_in from;
+    socklen_t from_len = sizeof(from);
+
+    ssize_t recv_len = recvfrom(raw_socket, buffer, sizeof(buffer), 0,
+                                (struct sockaddr *)&from, &from_len);
+    if (recv_len < 0) {
+        perror("Erreur lors de la réception de la réponse");
+        close(raw_socket);
+        exit(EXIT_FAILURE);
+    }
+
+    // Afficher l'adresse de l'émetteur
+    printf("Paquet reçu de l'adresse %s\n", inet_ntoa(from.sin_addr));
+
+    // Fermeture de la socket
+    close(raw_socket);
+}
+
+
+
+
