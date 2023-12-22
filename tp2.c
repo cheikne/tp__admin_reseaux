@@ -118,8 +118,8 @@ void creationSocketToSendPacket(struct iphdr ip_header, char *ip_packet){
     struct sockaddr_in dest_addr;
     memset(&dest_addr, 0, sizeof(dest_addr));
     dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = 0; // Pas utilisé pour SOCK_RAW
-    dest_addr.sin_addr.s_addr = ip_header.daddr; // Remplacez par l'adresse de destination réelle
+    dest_addr.sin_port = htons(1024);
+    dest_addr.sin_addr.s_addr = ip_header.daddr; //L'adresse de destination
     memset(dest_addr.sin_zero, 0, sizeof(dest_addr.sin_zero));
 
     // Envoi du paquet
@@ -128,6 +128,7 @@ void creationSocketToSendPacket(struct iphdr ip_header, char *ip_packet){
 
     if (bytes_sent == -1) {
         perror("Erreur lors de l'envoi du paquet");
+        exit(EXIT_FAILURE);
     } else {
         printf("Paquet envoyé avec succès (%zd octets)\n", bytes_sent);
     }
@@ -139,6 +140,7 @@ void creationSocketToSendPacket(struct iphdr ip_header, char *ip_packet){
 
     ssize_t recv_len = recvfrom(raw_socket, buffer, sizeof(buffer), 0,
                                 (struct sockaddr *)&from, &from_len);
+    printf("Reception du paquet envoyé pour l'affichage.... : \n");
     if (recv_len < 0) {
         perror("Erreur lors de la réception de la réponse");
         close(raw_socket);
